@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FloristOS</title>
+  <meta name="description" content="플라워샵 운영 SaaS 데모">
+  <style>
+    *{box-sizing:border-box} html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;background:#f6f7fb;color:#0f172a}
+    button,input,select,textarea{font:inherit}
+    .hidden{display:none!important}
+    .app{min-height:100vh}
+    .top{position:sticky;top:0;z-index:20;background:#ffffffee;backdrop-filter:blur(8px);border-bottom:1px solid #e2e8f0}
+    .top-inner{max-width:1200px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .mark{width:40px;height:40px;border-radius:14px;background:#0f172a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+    .sub{font-size:12px;color:#64748b}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{border:none;border-radius:14px;padding:11px 15px;font-weight:700;cursor:pointer}
+    .btn-dark{background:#0f172a;color:#fff}
+    .btn-light{background:#fff;color:#0f172a;border:1px solid #cbd5e1}
+    .btn-soft{background:#e2e8f0;color:#0f172a}
+    .btn-full{width:100%}
+    .wrap{max-width:1200px;margin:0 auto;padding:24px 20px}
+    .hero{padding:44px 0}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;align-items:center}
+    .badge{display:inline-block;background:#e2e8f0;color:#334155;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:700}
+    h1{font-size:56px;line-height:1.06;letter-spacing:-0.04em;margin:16px 0}
+    h2{font-size:34px;line-height:1.15;letter-spacing:-0.03em;margin:0}
+    p.lead{font-size:18px;line-height:1.8;color:#475569;max-width:760px}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    .card{background:#fff;border:1px solid #e2e8f0;border-radius:22px;box-shadow:0 10px 30px rgba(15,23,42,.06)}
+    .card-body{padding:22px}
+    .metric-k{font-size:13px;color:#64748b}
+    .metric-v{font-size:28px;font-weight:800;margin-top:8px}
+    .section{padding:30px 0}
+    .section-top{max-width:760px;margin-bottom:22px}
+    .muted{color:#64748b}
+    .feature-title{font-size:18px;font-weight:800;margin:14px 0 8px}
+    .feature-desc{font-size:14px;line-height:1.75;color:#475569}
+    .emoji{width:42px;height:42px;border-radius:14px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:22px}
+    .layout{max-width:1500px;margin:0 auto;padding:18px;display:grid;grid-template-columns:260px 1fr;gap:18px}
+    .sidebar{background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);position:sticky;top:18px;height:fit-content}
+    .menu{display:grid;gap:8px;margin-top:12px}
+    .menu button{border:none;background:transparent;border-radius:14px;padding:12px 14px;text-align:left;font-weight:700;color:#475569;cursor:pointer}
+    .menu button.active{background:#0f172a;color:#fff}
+    .menu button:hover{background:#f1f5f9}
+    .content{display:grid;gap:18px}
+    .page-head{background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:22px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;box-shadow:0 10px 30px rgba(15,23,42,.06)}
+    .title-lg{font-size:32px;font-weight:800;letter-spacing:-0.03em}
+    .field{display:grid;gap:7px}
+    .label{font-size:13px;color:#475569;font-weight:700}
+    .input,.select,.textarea{width:100%;padding:12px 13px;border:1px solid #cbd5e1;border-radius:14px;background:#fff;color:#0f172a;outline:none}
+    .textarea{min-height:100px;resize:vertical}
+    .input:focus,.select:focus,.textarea:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,139,.12)}
+    .list{display:grid;gap:12px}
+    .item{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:16px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
+    .pill-ok{background:#dcfce7;color:#166534}
+    .pill-warn{background:#fef3c7;color:#92400e}
+    .pill-info{background:#dbeafe;color:#1d4ed8}
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:18px;overflow:hidden}
+    th,td{padding:12px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:14px;vertical-align:top}
+    th{font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:.04em}
+    .empty{padding:28px;text-align:center;color:#64748b;background:#fff;border:1px dashed #cbd5e1;border-radius:18px}
+    .toast{position:fixed;right:16px;top:16px;background:#0f172a;color:#fff;padding:14px 16px;border-radius:16px;display:none;z-index:99}
+    .trial{margin-top:14px;padding:12px;border-radius:16px;background:#0f172a;color:#fff}
+    @media (max-width:1100px){.hero-grid,.layout,.grid2{grid-template-columns:1fr}.grid4,.grid3{grid-template-columns:repeat(2,1fr)}h1{font-size:44px}}
+    @media (max-width:700px){.grid4,.grid3{grid-template-columns:1fr}.page-head{flex-direction:column}.top-inner{padding:12px 14px}h1{font-size:34px}.wrap{padding:18px 14px}.layout{padding:14px}}
+  </style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<div id="app" class="app"></div>
+
+<script>
+(function () {
+  var STORAGE_KEY = "floristos_singlefile_v3";
+
+  function deepCopy(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+  var defaultState = {
+    route: "landing",
+    currentUser: null,
+    pendingPlan: "무료체험",
+    users: [],
+    orders: [
+      { id:"ORD-1001", customer:"김민서", phone:"010-1234-5678", product:"봄 파스텔 꽃다발", category:"꽃다발", date:"2026-03-20", status:"제작 대기", amount:69000, deposit:30000, balance:39000, pickup:"매장 픽업", note:"연핑크 위주" },
+      { id:"ORD-1002", customer:"정해인 웨딩", phone:"010-7777-8888", product:"웨딩 부케 + 센터피스", category:"웨딩", date:"2026-03-28", status:"확정", amount:980000, deposit:300000, balance:680000, pickup:"현장 세팅", note:"화이트 그린 클래식" }
+    ],
+    inventory: [
+      { id:"INV-1", name:"화이트 튤립", stock:18, unit:"단", reorder:20, supplier:"양재 A상가", freshness:88, cost:8000 },
+      { id:"INV-2", name:"핑크 라넌큘러스", stock:26, unit:"단", reorder:15, supplier:"새벽시장", freshness:91, cost:14000 }
+    ],
+    receipts: [
+      { id:"REC-1", title:"포장재 구매", category:"포장재비", amount:67000, date:"2026-03-15", vendor:"부자재몰", note:"리본, 포장지" },
+      { id:"REC-2", title:"퀵배송 비용", category:"배송비", amount:21000, date:"2026-03-14", vendor:"퀵서비스", note:"서초구 배송" }
+    ],
+    customers: [
+      { id:"CUS-1", name:"김민서", phone:"010-1234-5678", tier:"VIP", totalSpent:820000, memo:"핑크/화이트 선호" },
+      { id:"CUS-2", name:"정해인 웨딩", phone:"010-7777-8888", tier:"계약", totalSpent:980000, memo:"웨딩 프로젝트 고객" }
+    ],
+    calendar: [
+      { id:"CAL-1", title:"시장 사입", date:"2026-03-19", time:"07:00", type:"사입", done:false },
+      { id:"CAL-2", title:"김민서 픽업 주문", date:"2026-03-20", time:"11:00", type:"픽업", done:false },
+      { id:"CAL-3", title:"웨딩 상담", date:"2026-03-22", time:"16:00", type:"상담", done:false }
+    ],
+    settings: {
+      shopName:"FloristOS Demo Shop",
+      ownerName:"대표",
+      phone:"010-0000-0000",
+      address:"서울 한남동",
+      openHours:"09:00 - 20:00"
+    }
+  };
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return deepCopy(defaultState);
+      var parsed = JSON.parse(raw);
+      var merged = deepCopy(defaultState);
+      for (var k in parsed) merged[k] = parsed[k];
+      return merged;
+    } catch (e) {
+      return deepCopy(defaultState);
+    }
+  }
+
+  var state = loadState();
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function money(v){ return "₩" + Number(v || 0).toLocaleString("ko-KR"); }
+  function esc(v){
+    return String(v == null ? "" : v)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+  function uid(prefix){ return prefix + "-" + Math.random().toString(36).slice(2,8).toUpperCase(); }
+  function toast(msg){
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    clearTimeout(window.__toast);
+    window.__toast = setTimeout(function(){ t.style.display = "none"; }, 2200);
+  }
+  function trialInfo(user){
+    if (!user || !user.trialStart) return null;
+    var s = new Date(user.trialStart);
+    var e = new Date(s.getTime());
+    e.setDate(e.getDate() + 30);
+    var diff = Math.ceil((e - new Date()) / 86400000);
+    return { remaining: Math.max(diff,0), end: e };
+  }
+  function requireLogin(route){
+    if (!state.currentUser) {
+      toast("로그인이 필요합니다.");
+      state.route = "login";
+      saveState();
+      render();
+      return false;
+    }
+    state.route = route;
+    saveState();
+    render();
+    return true;
+  }
+  function lowStockCount(){
+    return state.inventory.filter(function(x){ return Number(x.stock) <= Number(x.reorder); }).length;
+  }
+  function salesTotal(){
+    return state.orders.reduce(function(s,x){ return s + Number(x.amount || 0); }, 0);
+  }
+  function costTotal(){
+    return state.receipts.reduce(function(s,x){ return s + Number(x.amount || 0); }, 0);
+  }
+  function statusPill(status){
+    if ((status || "").indexOf("확정") > -1 || (status || "").indexOf("완료") > -1) return '<span class="pill pill-ok">'+esc(status)+'</span>';
+    if ((status || "").indexOf("상담") > -1) return '<span class="pill pill-info">'+esc(status)+'</span>';
+    return '<span class="pill pill-warn">'+esc(status)+'</span>';
+  }
+
+  function topbar() {
+    return '' +
+      '<div class="top">' +
+      ' <div class="top-inner">' +
+      '   <div class="brand">' +
+      '     <div class="mark">F</div>' +
+      '     <div><div><strong>FloristOS</strong></div><div class="sub">Flower Shop Operating System</div></div>' +
+      '   </div>' +
+      '   <div class="row">' +
+      (state.currentUser
+        ? '<button class="btn btn-light" data-need-login="dashboard" type="button">대시보드</button>'
+        : '<button class="btn btn-light" data-route="login" type="button">로그인</button>') +
+      '     <button class="btn btn-dark" data-route="signup" type="button">무료 시작하기</button>' +
+      '   </div>' +
+      ' </div>' +
+      '</div>';
+  }
+
+  function landingPage() {
+    return '' +
+      topbar() +
+      '<div class="wrap hero">' +
+      ' <div class="hero-grid">' +
+      '   <div>' +
+      '     <div class="badge">플라워샵 전용 운영 서비스</div>' +
+      '     <h1>플라워샵 운영을<br>주문부터 회계까지<br>하나의 서비스로.</h1>' +
+      '     <p class="lead">회원가입, 로그인, 1개월 무료체험, 주문 등록, 재고 관리, 회계, 고객관리, 일정관리까지 실제로 동작하는 사용 가능한 버전입니다.</p>' +
+      '     <div class="row" style="margin-top:24px">' +
+      '       <button class="btn btn-dark" data-route="signup" type="button">1개월 무료체험 시작</button>' +
+      '       <button class="btn btn-light" data-route="pricing" type="button">요금제 보기</button>' +
+      '     </div>' +
+      '     <div class="grid4" style="margin-top:28px">' +
+      metric('주문·예약', state.orders.length + '건') +
+      metric('재고 경고', lowStockCount() + '개') +
+      metric('총 매출', money(salesTotal())) +
+      metric('총 비용', money(costTotal())) +
+      '     </div>' +
+      '   </div>' +
+      '   <div class="card"><div class="card-body">' +
+      '     <div class="grid2">' +
+      mini('오늘 주문', state.orders.length + '건') +
+      mini('고객', state.customers.length + '명') +
+      mini('영수증', state.receipts.length + '건') +
+      mini('일정', state.calendar.length + '개') +
+      '     </div>' +
+      '   </div></div>' +
+      ' </div>' +
+      '</div>' +
+
+      '<div class="wrap section">' +
+      ' <div class="section-top">' +
+      '   <div class="badge">Core Features</div>' +
+      '   <h2 style="margin-top:14px">실제로 많이 쓰는 기능을 한 화면에.</h2>' +
+      '   <p class="lead" style="font-size:17px">단순 소개 페이지가 아니라 실제로 입력하고 저장하고 이동할 수 있는 구조로 만들었습니다.</p>' +
+      ' </div>' +
+      ' <div class="grid4">' +
+      feature('📊','운영 대시보드','총 매출, 비용, 이익, 재고 경고, 최근 주문과 일정까지 확인합니다.') +
+      feature('🗓️','캘린더 관리','제작, 사입, 픽업, 상담 일정을 추가하고 완료 상태를 바꿀 수 있습니다.') +
+      feature('💐','주문 관리','주문을 입력하면 목록에 바로 반영되고 금액과 잔금까지 저장됩니다.') +
+      feature('🌿','재고 관리','수량, 단위, 신선도, 재주문 기준, 거래처를 함께 관리합니다.') +
+      feature('🧾','회계 관리','영수증/비용을 저장하고 총비용과 예상 이익을 자동 계산합니다.') +
+      feature('👥','고객 CRM','고객명, 연락처, 등급, 누적매출, 메모를 저장할 수 있습니다.') +
+      feature('⚙️','설정','매장명, 대표명, 플랜 등 계정 정보를 수정할 수 있습니다.') +
+      feature('⬇️','데이터 내보내기','JSON/CSV 다운로드와 전체 초기화가 가능합니다.') +
+      ' </div>' +
+      '</div>' +
+
+      '<div class="wrap section">' +
+      ' <div class="section-top" style="text-align:center;max-width:none">' +
+      '   <div class="badge">Pricing</div>' +
+      '   <h2 style="margin-top:14px">무료체험부터 유료 플랜까지.</h2>' +
+      '   <p class="lead" style="font-size:17px;max-width:none">무료체험, Starter, Pro로 구성했습니다.</p>' +
+      ' </div>' +
+      ' <div class="grid3">' +
+      planCard('무료체험','1개월 무료 사용','₩0',['30일 무료','주문 / 재고 / 회계 / 고객 / 일정 사용','데이터 저장','이후 Starter / Pro 전환 가능'],'무료체험', false) +
+      planCard('Starter','1인 플라워샵 시작용','₩29,000',['주문·캘린더','재고관리','영수증 업로드','기본 CRM'],'Starter', false) +
+      planCard('Pro','웨딩·행사까지 운영','₩79,000',['Starter 포함','웨딩 프로젝트 운영','고급 리포트 확장용','상용화 판매용 메인 플랜'],'Pro', true) +
+      ' </div>' +
+      '</div>';
+  }
+
+  function metric(k,v){
+    return '<div class="card"><div class="card-body"><div class="metric-k">'+k+'</div><div class="metric-v">'+v+'</div></div></div>';
+  }
+  function mini(k,v){
+    return '<div class="card"><div class="card-body"><div class="metric-k">'+k+'</div><div class="metric-v" style="font-size:24px">'+v+'</div></div></div>';
+  }
+  function feature(emoji,title,desc){
+    return '<div class="card"><div class="card-body"><div class="emoji">'+emoji+'</div><div class="feature-title">'+title+'</div><div class="feature-desc">'+desc+'</div></div></div>';
+  }
+  function planCard(title,desc,price,items,plan,highlight){
+    return '' +
+      '<div class="card' + (highlight ? '"' : '"') + '><div class="card-body' + (highlight ? '' : '') + '"' + (highlight ? ' style="background:#0f172a;color:#fff;border-radius:22px"' : '') + '>' +
+      (highlight ? '<div class="badge" style="background:#fff;color:#0f172a">인기</div>' : '') +
+      '<div style="font-size:28px;font-weight:800;margin-top:' + (highlight ? '14' : '0') + 'px">'+title+'</div>' +
+      '<div class="sub" style="margin-top:6px;color:' + (highlight ? 'rgba(255,255,255,.72)' : '#64748b') + '">'+desc+'</div>' +
+      '<div style="font-size:46px;font-weight:900;letter-spacing:-.04em;margin-top:18px">'+price+'</div>' +
+      '<div class="list" style="margin-top:18px">' + items.map(function(x){ return '<div>✓ ' + x + '</div>'; }).join('') + '</div>' +
+      '<button class="btn ' + (highlight ? 'btn-light' : 'btn-dark') + ' btn-full plan-select" data-plan="'+plan+'" style="margin-top:20px" type="button">'+title+' 시작</button>' +
+      '</div></div>';
+  }
+
+  function signupPage(){
+    return '' +
+      topbar() +
+      '<div class="wrap section" style="max-width:760px">' +
+      ' <div class="page-head">' +
+      '   <div><div class="muted">회원가입</div><div class="title-lg">무료체험 또는 플랜 시작</div><div class="section-sub">한글 입력 오류 없이 바로 가입할 수 있습니다.</div></div>' +
+      '   <button class="btn btn-light" data-route="landing" type="button">홈으로</button>' +
+      ' </div>' +
+      ' <div class="card" style="margin-top:18px"><div class="card-body">' +
+      '   <div class="grid2">' +
+      field('이름','<input id="signup-name" class="input" />') +
+      field('이메일','<input id="signup-email" class="input" type="email" />') +
+      field('비밀번호','<input id="signup-password" class="input" type="password" />') +
+      field('플라워샵명','<input id="signup-shop" class="input" />') +
+      field('플랜','<select id="signup-plan" class="select"><option>무료체험</option><option>Starter</option><option>Pro</option></select>') +
+      field('대표명','<input id="signup-owner" class="input" />') +
+      '   </div>' +
+      '   <div class="row" style="margin-top:18px">' +
+      '     <button class="btn btn-dark" id="signup-submit" type="button">가입 완료</button>' +
+      '     <button class="btn btn-light" data-route="login" type="button">이미 가입했어요</button>' +
+      '   </div>' +
+      ' </div></div>' +
+      '</div>';
+  }
+
+  function loginPage(){
+    return '' +
+      topbar() +
+      '<div class="wrap section" style="max-width:680px">' +
+      ' <div class="page-head">' +
+      '   <div><div class="muted">로그인</div><div class="title-lg">서비스 로그인</div><div class="section-sub">가입한 이메일과 비밀번호로 로그인하세요.</div></div>' +
+      '   <button class="btn btn-light" data-route="landing" type="button">홈으로</button>' +
+      ' </div>' +
+      ' <div class="card" style="margin-top:18px"><div class="card-body">' +
+      '   <div class="list">' +
+      field('이메일','<input id="login-email" class="input" type="email" />') +
+      field('비밀번호','<input id="login-password" class="input" type="password" />') +
+      '   </div>' +
+      '   <div class="row" style="margin-top:18px">' +
+      '     <button class="btn btn-dark" id="login-submit" type="button">로그인</button>' +
+      '     <button class="btn btn-light" data-route="signup" type="button">회원가입</button>' +
+      '   </div>' +
+      ' </div></div>' +
+      '</div>';
+  }
+
+  function field(label, control){
+    return '<div class="field"><label class="label">'+label+'</label>'+control+'</div>';
+  }
+
+  function shell(inner){
+    if (!state.currentUser) {
+      state.route = "login";
+      saveState();
+      return loginPage();
+    }
+    var user = state.currentUser;
+    var trial = trialInfo(user);
+    return '' +
+      '<div class="layout">' +
+      ' <aside class="sidebar">' +
+      '   <div class="brand"><div class="mark">F</div><div><div><strong>'+esc(user.shopName)+'</strong></div><div class="sub">'+esc(user.plan)+(user.plan === '무료체험' && trial ? ' · '+trial.remaining+'일 남음' : '')+'</div></div></div>' +
+      (user.plan === '무료체험' ? '<div class="trial">무료체험 진행 중<br><span style="font-size:12px;color:rgba(255,255,255,.74)">남은 기간 '+(trial ? trial.remaining : 0)+'일</span></div>' : '') +
+      '   <div class="menu">' +
+      menuBtn('dashboard','대시보드') +
+      menuBtn('orders','주문') +
+      menuBtn('calendar','캘린더') +
+      menuBtn('inventory','재고') +
+      menuBtn('accounting','회계') +
+      menuBtn('customers','고객') +
+      menuBtn('settings','설정') +
+      '   </div>' +
+      '   <div class="row" style="margin-top:18px">' +
+      '     <button class="btn btn-light btn-full" id="export-json" type="button">JSON 다운로드</button>' +
+      '     <button class="btn btn-light btn-full" id="export-csv" type="button">주문 CSV</button>' +
+      '     <button class="btn btn-light btn-full" id="logout-btn" type="button">로그아웃</button>' +
+      '     <button class="btn btn-soft btn-full" id="reset-btn" type="button">전체 초기화</button>' +
+      '   </div>' +
+      ' </aside>' +
+      ' <main class="content">' + inner + '</main>' +
+      '</div>';
+  }
+
+  function menuBtn(route,label){
+    return '<button class="menu-route'+(state.route===route?' active':'')+'" data-need-login="'+route+'" type="button">'+label+'</button>';
+  }
+
+  function dashboardPage(){
+    var sales = salesTotal(), costs = costTotal(), profit = sales - costs;
+    return shell('' +
+      '<div class="page-head">' +
+      ' <div><div class="muted">운영 대시보드</div><div class="title-lg">'+esc(state.currentUser.shopName)+' 운영 현황</div><div class="section-sub">실제 저장된 데이터로 계산됩니다.</div></div>' +
+      ' <button class="btn btn-dark" data-need-login="orders" type="button">주문 추가</button>' +
+      '</div>' +
+      '<div class="grid4">' +
+      metric('총 매출', money(sales)) +
+      metric('총 비용', money(costs)) +
+      metric('예상 이익', money(profit)) +
+      metric('재고 경고', lowStockCount() + '개') +
+      '</div>' +
+      '<div class="grid2">' +
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">최근 주문</h2><div class="list" style="margin-top:18px">' +
+      (state.orders.length ? state.orders.slice(0,5).map(function(o){
+        return '<div class="item"><div><div><strong>'+esc(o.product)+'</strong></div><div class="sub">'+esc(o.customer)+' · '+o.date+' · '+esc(o.pickup)+'</div></div><div><strong>'+money(o.amount)+'</strong></div></div>';
+      }).join('') : '<div class="empty">주문이 없습니다.</div>') +
+      '</div></div></div>' +
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">최근 일정</h2><div class="list" style="margin-top:18px">' +
+      (state.calendar.length ? state.calendar.slice(0,5).map(function(c){
+        return '<div class="item"><div><div><strong>'+esc(c.title)+'</strong></div><div class="sub">'+c.date+' · '+c.time+' · '+esc(c.type)+'</div></div><button class="btn btn-soft toggle-calendar" data-id="'+c.id+'" type="button">'+(c.done?'완료':'대기')+'</button></div>';
+      }).join('') : '<div class="empty">일정이 없습니다.</div>') +
+      '</div></div></div>' +
+      '</div>'
+    );
+  }
+
+  function ordersPage(){
+    return shell('' +
+      '<div class="page-head"><div><div class="muted">주문 관리</div><div class="title-lg">주문 추가 및 목록</div><div class="section-sub">입력하면 바로 저장되고 목록에 반영됩니다.</div></div><button class="btn btn-light" id="export-csv-top" type="button">주문 CSV</button></div>' +
+      '<div class="grid2">' +
+      '<div class="card"><div class="card-body">' +
+      '<h2 style="font-size:24px">주문 추가</h2>' +
+      '<div class="grid2" style="margin-top:18px">' +
+      field('고객명','<input id="order-customer" class="input" />') +
+      field('연락처','<input id="order-phone" class="input" />') +
+      field('상품명','<input id="order-product" class="input" />') +
+      field('카테고리','<input id="order-category" class="input" value="꽃다발" />') +
+      field('예약일','<input id="order-date" class="input" type="date" />') +
+      field('상태','<input id="order-status" class="input" value="상담 중" />') +
+      field('총 금액','<input id="order-amount" class="input" type="number" value="0" />') +
+      field('계약금','<input id="order-deposit" class="input" type="number" value="0" />') +
+      field('잔금','<input id="order-balance" class="input" type="number" value="0" />') +
+      field('수령 방식','<input id="order-pickup" class="input" value="매장 픽업" />') +
+      '<div style="grid-column:1 / -1">' + field('메모','<textarea id="order-note" class="textarea"></textarea>') + '</div>' +
+      '</div><div style="margin-top:18px"><button class="btn btn-dark btn-full" id="add-order" type="button">주문 저장</button></div>' +
+      '</div></div>' +
+
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">주문 목록</h2><div class="table-wrap" style="margin-top:18px"><table><thead><tr><th>고객</th><th>상품</th><th>일자</th><th>금액</th><th>상태</th><th>관리</th></tr></thead><tbody>' +
+      (state.orders.length ? state.orders.map(function(o){
+        return '<tr><td>'+esc(o.customer)+'<div class="sub">'+esc(o.phone)+'</div></td><td>'+esc(o.product)+'<div class="sub">'+esc(o.category)+' · '+esc(o.pickup)+'</div></td><td>'+o.date+'</td><td>'+money(o.amount)+'</td><td>'+statusPill(o.status)+'</td><td><button class="btn btn-light del-order" data-id="'+o.id+'" type="button">삭제</button></td></tr>';
+      }).join('') : '<tr><td colspan="6"><div class="empty">주문이 없습니다.</div></td></tr>') +
+      '</tbody></table></div></div></div>' +
+      '</div>'
+    );
+  }
+
+  function calendarPage(){
+    return shell('' +
+      '<div class="page-head"><div><div class="muted">캘린더</div><div class="title-lg">일정 관리</div><div class="section-sub">일정 추가 및 완료 전환</div></div></div>' +
+      '<div class="grid2">' +
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">일정 추가</h2><div class="list" style="margin-top:18px">' +
+      field('일정명','<input id="cal-title" class="input" />') +
+      field('날짜','<input id="cal-date" class="input" type="date" />') +
+      field('시간','<input id="cal-time" class="input" type="time" value="09:00" />') +
+      field('유형','<input id="cal-type" class="input" value="제작" />') +
+      '</div><div style="margin-top:18px"><button class="btn btn-dark btn-full" id="add-calendar" type="button">일정 저장</button></div></div></div>' +
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">일정 목록</h2><div class="list" style="margin-top:18px">' +
+      (state.calendar.length ? state.calendar.map(function(c){
+        return '<div class="item"><div><div><strong>'+esc(c.title)+'</strong></div><div class="sub">'+c.date+' · '+c.time+' · '+esc(c.type)+'</div></div><div class="row"><button class="btn btn-soft toggle-calendar" data-id="'+c.id+'" type="button">'+(c.done?'완료':'대기')+'</button><button class="btn btn-light del-calendar" data-id="'+c.id+'" type="button">삭제</button></div></div>';
+      }).join('') : '<div class="empty">일정이 없습니다.</div>') +
+      '</div></div></div>' +
+      '</div>'
+    );
+  }
+
+  function inventoryPage(){
+    return shell('' +
+      '<div class="page-head"><div><div class="muted">재고 관리</div><div class="title-lg">꽃 재고 / 사입 관리</div><div class="section-sub">재고, 신선도, 단가, 재주문 기준을 저장합니다.</div></div></div>' +
+      '<div class="grid2">' +
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">재고 추가</h2><div class="grid2" style="margin-top:18px">' +
+      field('재고명','<input id="inv-name" class="input" />') +
+      field('수량','<input id="inv-stock" class="input" type="number" value="0" />') +
+      field('단위','<input id="inv-unit" class="input" value="단" />') +
+      field('재주문 기준','<input id="inv-reorder" class="input" type="number" value="0" />') +
+      field('거래처','<input id="inv-supplier" class="input" />') +
+      field('신선도','<input id="inv-freshness" class="input" type="number" value="100" />') +
+      field('단가','<input id="inv-cost" class="input" type="number" value="0" />') +
+      '</div><div style="margin-top:18px"><button class="btn btn-dark btn-full" id="add-inventory" type="button">재고 저장</button></div></div></div>' +
+
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">재고 목록</h2><div class="list" style="margin-top:18px">' +
+      (state.inventory.length ? state.inventory.map(function(i){
+        var pill = Number(i.stock) <= Number(i.reorder) ? '<span class="pill pill-warn">재주문 필요</span>' : '<span class="pill pill-ok">정상</span>';
+        return '<div class="item"><div><div><strong>'+esc(i.name)+'</strong></div><div class="sub">'+i.stock+esc(i.unit)+' · '+esc(i.supplier)+' · 신선도 '+i.freshness+'%</div></div><div class="row">'+pill+'<button class="btn btn-light del-inventory" data-id="'+i.id+'" type="button">삭제</button></div></div>';
+      }).join('') : '<div class="empty">재고가 없습니다.</div>') +
+      '</div></div></div>' +
+      '</div>'
+    );
+  }
+
+  function accountingPage(){
+    var sales = salesTotal(), costs = costTotal(), profit = sales - costs;
+    return shell('' +
+      '<div class="page-head"><div><div class="muted">회계</div><div class="title-lg">영수증 / 비용 관리</div><div class="section-sub">비용을 입력하면 손익이 자동 계산됩니다.</div></div></div>' +
+      '<div class="grid4">' +
+      metric('총 매출', money(sales)) +
+      metric('총 비용', money(costs)) +
+      metric('예상 이익', money(profit)) +
+      metric('영수증 건수', state.receipts.length + '건') +
+      '</div>' +
+      '<div class="grid2">' +
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">영수증 추가</h2><div class="grid2" style="margin-top:18px">' +
+      field('제목','<input id="rec-title" class="input" />') +
+      field('카테고리','<input id="rec-category" class="input" value="사입비" />') +
+      field('금액','<input id="rec-amount" class="input" type="number" value="0" />') +
+      field('일자','<input id="rec-date" class="input" type="date" />') +
+      field('거래처','<input id="rec-vendor" class="input" />') +
+      '<div style="grid-column:1 / -1">' + field('메모','<textarea id="rec-note" class="textarea"></textarea>') + '</div>' +
+      '</div><div style="margin-top:18px"><button class="btn btn-dark btn-full" id="add-receipt" type="button">영수증 저장</button></div></div></div>' +
+
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">영수증 목록</h2><div class="list" style="margin-top:18px">' +
+      (state.receipts.length ? state.receipts.map(function(r){
+        return '<div class="item"><div><div><strong>'+esc(r.title)+'</strong></div><div class="sub">'+r.date+' · '+esc(r.vendor)+' · '+esc(r.category)+'</div></div><div class="row"><strong>'+money(r.amount)+'</strong><button class="btn btn-light del-receipt" data-id="'+r.id+'" type="button">삭제</button></div></div>';
+      }).join('') : '<div class="empty">영수증이 없습니다.</div>') +
+      '</div></div></div>' +
+      '</div>'
+    );
+  }
+
+  function customersPage(){
+    return shell('' +
+      '<div class="page-head"><div><div class="muted">고객 CRM</div><div class="title-lg">고객 관리</div><div class="section-sub">고객명, 등급, 누적 매출, 메모를 저장합니다.</div></div></div>' +
+      '<div class="grid2">' +
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">고객 추가</h2><div class="grid2" style="margin-top:18px">' +
+      field('고객명','<input id="cus-name" class="input" />') +
+      field('연락처','<input id="cus-phone" class="input" />') +
+      field('고객 등급','<input id="cus-tier" class="input" value="일반" />') +
+      field('누적 매출','<input id="cus-spent" class="input" type="number" value="0" />') +
+      '<div style="grid-column:1 / -1">' + field('메모','<textarea id="cus-memo" class="textarea"></textarea>') + '</div>' +
+      '</div><div style="margin-top:18px"><button class="btn btn-dark btn-full" id="add-customer" type="button">고객 저장</button></div></div></div>' +
+
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">고객 목록</h2><div class="list" style="margin-top:18px">' +
+      (state.customers.length ? state.customers.map(function(c){
+        return '<div class="item"><div><div><strong>'+esc(c.name)+'</strong></div><div class="sub">'+esc(c.phone)+' · '+esc(c.tier)+'</div><div class="sub">'+esc(c.memo)+'</div></div><div class="row"><strong>'+money(c.totalSpent)+'</strong><button class="btn btn-light del-customer" data-id="'+c.id+'" type="button">삭제</button></div></div>';
+      }).join('') : '<div class="empty">고객이 없습니다.</div>') +
+      '</div></div></div>' +
+      '</div>'
+    );
+  }
+
+  function settingsPage(){
+    var u = state.currentUser || {name:"",email:"",plan:"무료체험",shopName:""};
+    var t = trialInfo(u);
+    return shell('' +
+      '<div class="page-head"><div><div class="muted">설정</div><div class="title-lg">매장 / 계정 설정</div><div class="section-sub">계정과 매장 정보를 저장할 수 있습니다.</div></div></div>' +
+      '<div class="grid2">' +
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">계정 정보</h2><div class="grid2" style="margin-top:18px">' +
+      field('이름','<input id="set-name" class="input" value="'+esc(u.name)+'" />') +
+      field('이메일','<input class="input" value="'+esc(u.email)+'" disabled />') +
+      field('플랜','<select id="set-plan" class="select">' +
+        '<option '+(u.plan==="무료체험"?"selected":"")+'>무료체험</option>' +
+        '<option '+(u.plan==="Starter"?"selected":"")+'>Starter</option>' +
+        '<option '+(u.plan==="Pro"?"selected":"")+'>Pro</option>' +
+      '</select>') +
+      field('무료체험 상태','<input class="input" value="'+esc(u.plan==="무료체험" ? ("남은 기간 " + (t ? t.remaining : 0) + "일") : "유료 플랜 사용중")+'" disabled />') +
+      '</div></div></div>' +
+
+      '<div class="card"><div class="card-body"><h2 style="font-size:24px">매장 정보</h2><div class="grid2" style="margin-top:18px">' +
+      field('플라워샵명','<input id="set-shop" class="input" value="'+esc(u.shopName || state.settings.shopName)+'" />') +
+      field('대표명','<input id="set-owner" class="input" value="'+esc(state.settings.ownerName)+'" />') +
+      field('연락처','<input id="set-phone" class="input" value="'+esc(state.settings.phone)+'" />') +
+      field('운영시간','<input id="set-hours" class="input" value="'+esc(state.settings.openHours)+'" />') +
+      '<div style="grid-column:1 / -1">' + field('주소','<input id="set-address" class="input" value="'+esc(state.settings.address)+'" />') + '</div>' +
+      '</div><div style="margin-top:18px"><button class="btn btn-dark btn-full" id="save-settings" type="button">설정 저장</button></div></div></div>' +
+      '</div>'
+    );
+  }
+
+  function render() {
+    var app = document.getElementById("app");
+    var html = "";
+    switch (state.route) {
+      case "landing": html = landingPage(); break;
+      case "pricing": html = pricingPage(); break;
+      case "signup": html = signupPage(); break;
+      case "login": html = loginPage(); break;
+      case "dashboard": html = dashboardPage(); break;
+      case "orders": html = ordersPage(); break;
+      case "calendar": html = calendarPage(); break;
+      case "inventory": html = inventoryPage(); break;
+      case "accounting": html = accountingPage(); break;
+      case "customers": html = customersPage(); break;
+      case "settings": html = settingsPage(); break;
+      default: html = landingPage();
+    }
+    app.innerHTML = html;
+    bind();
+  }
+
+  function bind() {
+    document.querySelectorAll("[data-route]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        state.route = btn.getAttribute("data-route");
+        saveState();
+        render();
+        window.scrollTo(0,0);
+      });
+    });
+
+    document.querySelectorAll("[data-need-login]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        requireLogin(btn.getAttribute("data-need-login"));
+      });
+    });
+
+    document.querySelectorAll(".plan-select").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        state.pendingPlan = btn.getAttribute("data-plan");
+        state.route = "signup";
+        saveState();
+        render();
+      });
+    });
+
+    var logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) logoutBtn.addEventListener("click", function(){
+      state.currentUser = null;
+      state.route = "landing";
+      saveState();
+      toast("로그아웃되었습니다.");
+      render();
+    });
+
+    var resetBtn = document.getElementById("reset-btn");
+    if (resetBtn) resetBtn.addEventListener("click", function(){
+      localStorage.removeItem(STORAGE_KEY);
+      state = deepCopy(defaultState);
+      toast("데이터가 초기화되었습니다.");
+      render();
+    });
+
+    var exportJsonBtn = document.getElementById("export-json");
+    if (exportJsonBtn) exportJsonBtn.addEventListener("click", exportJson);
+
+    var exportCsvBtn = document.getElementById("export-csv");
+    if (exportCsvBtn) exportCsvBtn.addEventListener("click", exportOrdersCsv);
+    var exportCsvBtnTop = document.getElementById("export-csv-top");
+    if (exportCsvBtnTop) exportCsvBtnTop.addEventListener("click", exportOrdersCsv);
+
+    document.querySelectorAll(".toggle-calendar").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        state.calendar = state.calendar.map(function(x){
+          if (x.id === id) x.done = !x.done;
+          return x;
+        });
+        saveState();
+        render();
+      });
+    });
+
+    if (state.route === "signup") {
+      var sel = document.getElementById("signup-plan");
+      if (sel && state.pendingPlan) sel.value = state.pendingPlan;
+      document.getElementById("signup-submit").addEventListener("click", function(){
+        var user = {
+          name: document.getElementById("signup-name").value.trim(),
+          email: document.getElementById("signup-email").value.trim(),
+          password: document.getElementById("signup-password").value,
+          shopName: document.getElementById("signup-shop").value.trim(),
+          plan: document.getElementById("signup-plan").value,
+          ownerName: document.getElementById("signup-owner").value.trim(),
+          trialStart: document.getElementById("signup-plan").value === "무료체험" ? new Date().toISOString() : null
+        };
+        if (!user.name || !user.email || !user.password || !user.shopName) {
+          toast("회원가입 정보를 모두 입력해 주세요.");
+          return;
+        }
+        if (state.users.some(function(u){ return u.email === user.email; })) {
+          toast("이미 존재하는 이메일입니다.");
+          return;
+        }
+        state.users.unshift(user);
+        state.currentUser = user;
+        state.settings.shopName = user.shopName;
+        state.settings.ownerName = user.ownerName || user.name;
+        state.route = "dashboard";
+        saveState();
+        toast("회원가입이 완료되었습니다.");
+        render();
+      });
+    }
+
+    if (state.route === "login") {
+      document.getElementById("login-submit").addEventListener("click", function(){
+        var email = document.getElementById("login-email").value.trim();
+        var password = document.getElementById("login-password").value;
+        var found = state.users.find(function(u){ return u.email === email && u.password === password; });
+        if (!found) {
+          toast("이메일 또는 비밀번호를 확인해 주세요.");
+          return;
+        }
+        state.currentUser = found;
+        state.route = "dashboard";
+        saveState();
+        toast("로그인되었습니다.");
+        render();
+      });
+    }
+
+    if (state.route === "orders") {
+      document.getElementById("add-order").addEventListener("click", function(){
+        var order = {
+          id: uid("ORD"),
+          customer: document.getElementById("order-customer").value.trim(),
+          phone: document.getElementById("order-phone").value.trim(),
+          product: document.getElementById("order-product").value.trim(),
+          category: document.getElementById("order-category").value.trim() || "꽃다발",
+          date: document.getElementById("order-date").value,
+          status: document.getElementById("order-status").value.trim() || "상담 중",
+          amount: Number(document.getElementById("order-amount").value || 0),
+          deposit: Number(document.getElementById("order-deposit").value || 0),
+          balance: Number(document.getElementById("order-balance").value || 0),
+          pickup: document.getElementById("order-pickup").value.trim() || "매장 픽업",
+          note: document.getElementById("order-note").value.trim()
+        };
+        if (!order.customer || !order.product || !order.date) {
+          toast("고객명, 상품명, 예약일은 필수입니다.");
+          return;
+        }
+        state.orders.unshift(order);
+        state.calendar.unshift({ id: uid("CAL"), title: order.customer + " " + order.pickup, date: order.date, time: "10:00", type: order.pickup, done: false });
+        saveState();
+        toast("주문이 추가되었습니다.");
+        render();
+      });
+      document.querySelectorAll(".del-order").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var id = btn.getAttribute("data-id");
+          state.orders = state.orders.filter(function(x){ return x.id !== id; });
+          saveState();
+          toast("주문을 삭제했습니다.");
+          render();
+        });
+      });
+    }
+
+    if (state.route === "calendar") {
+      document.getElementById("add-calendar").addEventListener("click", function(){
+        var item = {
+          id: uid("CAL"),
+          title: document.getElementById("cal-title").value.trim(),
+          date: document.getElementById("cal-date").value,
+          time: document.getElementById("cal-time").value,
+          type: document.getElementById("cal-type").value.trim() || "제작",
+          done: false
+        };
+        if (!item.title || !item.date) {
+          toast("일정명과 날짜는 필수입니다.");
+          return;
+        }
+        state.calendar.unshift(item);
+        saveState();
+        toast("일정이 추가되었습니다.");
+        render();
+      });
+      document.querySelectorAll(".del-calendar").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var id = btn.getAttribute("data-id");
+          state.calendar = state.calendar.filter(function(x){ return x.id !== id; });
+          saveState();
+          toast("일정을 삭제했습니다.");
+          render();
+        });
+      });
+    }
+
+    if (state.route === "inventory") {
+      document.getElementById("add-inventory").addEventListener("click", function(){
+        var item = {
+          id: uid("INV"),
+          name: document.getElementById("inv-name").value.trim(),
+          stock: Number(document.getElementById("inv-stock").value || 0),
+          unit: document.getElementById("inv-unit").value.trim() || "단",
+          reorder: Number(document.getElementById("inv-reorder").value || 0),
+          supplier: document.getElementById("inv-supplier").value.trim(),
+          freshness: Number(document.getElementById("inv-freshness").value || 100),
+          cost: Number(document.getElementById("inv-cost").value || 0)
+        };
+        if (!item.name) {
+          toast("재고명을 입력해 주세요.");
+          return;
+        }
+        state.inventory.unshift(item);
+        saveState();
+        toast("재고가 추가되었습니다.");
+        render();
+      });
+      document.querySelectorAll(".del-inventory").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var id = btn.getAttribute("data-id");
+          state.inventory = state.inventory.filter(function(x){ return x.id !== id; });
+          saveState();
+          toast("재고를 삭제했습니다.");
+          render();
+        });
+      });
+    }
+
+    if (state.route === "accounting") {
+      document.getElementById("add-receipt").addEventListener("click", function(){
+        var item = {
+          id: uid("REC"),
+          title: document.getElementById("rec-title").value.trim(),
+          category: document.getElementById("rec-category").value.trim() || "사입비",
+          amount: Number(document.getElementById("rec-amount").value || 0),
+          date: document.getElementById("rec-date").value,
+          vendor: document.getElementById("rec-vendor").value.trim(),
+          note: document.getElementById("rec-note").value.trim()
+        };
+        if (!item.title || !item.date) {
+          toast("제목과 날짜는 필수입니다.");
+          return;
+        }
+        state.receipts.unshift(item);
+        saveState();
+        toast("영수증이 저장되었습니다.");
+        render();
+      });
+      document.querySelectorAll(".del-receipt").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var id = btn.getAttribute("data-id");
+          state.receipts = state.receipts.filter(function(x){ return x.id !== id; });
+          saveState();
+          toast("영수증을 삭제했습니다.");
+          render();
+        });
+      });
+    }
+
+    if (state.route === "customers") {
+      document.getElementById("add-customer").addEventListener("click", function(){
+        var item = {
+          id: uid("CUS"),
+          name: document.getElementById("cus-name").value.trim(),
+          phone: document.getElementById("cus-phone").value.trim(),
+          tier: document.getElementById("cus-tier").value.trim() || "일반",
+          totalSpent: Number(document.getElementById("cus-spent").value || 0),
+          memo: document.getElementById("cus-memo").value.trim()
+        };
+        if (!item.name) {
+          toast("고객명을 입력해 주세요.");
+          return;
+        }
+        state.customers.unshift(item);
+        saveState();
+        toast("고객이 저장되었습니다.");
+        render();
+      });
+      document.querySelectorAll(".del-customer").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var id = btn.getAttribute("data-id");
+          state.customers = state.customers.filter(function(x){ return x.id !== id; });
+          saveState();
+          toast("고객을 삭제했습니다.");
+          render();
+        });
+      });
+    }
+
+    if (state.route === "settings") {
+      document.getElementById("save-settings").addEventListener("click", function(){
+        state.currentUser.name = document.getElementById("set-name").value.trim();
+        state.currentUser.plan = document.getElementById("set-plan").value;
+        state.currentUser.shopName = document.getElementById("set-shop").value.trim();
+        if (state.currentUser.plan === "무료체험" && !state.currentUser.trialStart) {
+          state.currentUser.trialStart = new Date().toISOString();
+        }
+        if (state.currentUser.plan !== "무료체험") {
+          state.currentUser.trialStart = null;
+        }
+        state.users = state.users.map(function(u){
+          return u.email === state.currentUser.email ? state.currentUser : u;
+        });
+        state.settings.ownerName = document.getElementById("set-owner").value.trim();
+        state.settings.phone = document.getElementById("set-phone").value.trim();
+        state.settings.address = document.getElementById("set-address").value.trim();
+        state.settings.openHours = document.getElementById("set-hours").value.trim();
+        state.settings.shopName = state.currentUser.shopName;
+        saveState();
+        toast("설정이 저장되었습니다.");
+        render();
+      });
+    }
+  }
+
+  function exportJson() {
+    var blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "floristos-data.json";
+    a.click();
+    URL.revokeObjectURL(url);
+    toast("JSON을 다운로드했습니다.");
+  }
+
+  function exportOrdersCsv() {
+    var headers = ["id","customer","phone","product","category","date","status","amount","deposit","balance","pickup","note"];
+    var rows = state.orders.map(function(order){
+      return headers.map(function(h){
+        var val = String(order[h] == null ? "" : order[h]).replace(/"/g,'""');
+        return '"' + val + '"';
+      }).join(",");
+    });
+    var csv = [headers.join(",")].concat(rows).join("\n");
+    var blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "floristos-orders.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    toast("주문 CSV를 다운로드했습니다.");
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
